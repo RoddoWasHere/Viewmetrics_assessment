@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 require('process');
 
@@ -15,6 +16,13 @@ module.exports = (env) => {
       historyApiFallback: true,
       static: {       
         directory: path.resolve(__dirname, './dist')
+      },
+      // allowedHosts: ["onroadvantage.com"],
+      http2: true,
+      https: {
+        key: fs.readFileSync('./ssl/server.key'),
+        cert: fs.readFileSync('./ssl/server.crt'),
+        // ca: fs.readFileSync('/path/to/ca.pem'),
       },
     },
     module: {

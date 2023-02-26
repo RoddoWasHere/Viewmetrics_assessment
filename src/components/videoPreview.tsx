@@ -1,4 +1,25 @@
 import React, { useRef, useEffect } from 'react';
+import { useLocalStore } from '../utils/localStore';
+import styled from '@emotion/styled';
+import ProgressCircular from './progressCircular';
+
+
+const VideoOverlayRel = styled.div`
+  position: relative;
+  // background: red;
+`;
+
+const VideoOverlayContainer = styled.div`
+  position: absolute;
+  background: #ffffff88; 
+  /* background: #00000088; */
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+  width: 100%;
+`;
+
 
 
 export function localFileToUrl(file: File){
@@ -21,9 +42,16 @@ export function VideoPreview({videoUrl, mimeType}){
     loadVideo();
   }, [])
 
-  return (<video style={{width: "100%"}} onChange={()=>console.log()} ref={videoRef} controls width="250">
-    <source src={videoUrl} type={mimeType}/>
-  </video>);
+  return (
+    <VideoOverlayRel>
+      {/* <VideoOverlayContainer> */}
+        {/* <ProgressCircular value={50}/> */}
+      {/* </VideoOverlayContainer> */}
+      <video style={{width: "100%"}} onChange={()=>console.log()} ref={videoRef} controls width="250">
+        <source src={videoUrl} type={mimeType}/>
+      </video>
+    </VideoOverlayRel>
+    );
 }
 
 /* 

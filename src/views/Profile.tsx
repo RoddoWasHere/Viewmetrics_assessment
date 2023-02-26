@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
-import { Card, Box, CardContent, Typography, CardMedia, Skeleton } from '@mui/material';
+import { 
+  Card,
+  Box,
+  CardContent,
+  Typography,
+  CardMedia,
+  Skeleton
+} from '@mui/material';
 import { LeftPanelLayout } from '../components/mainLayout';
+import { useLocalStore } from '../utils/localStore';
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -30,10 +38,34 @@ const GET_CHARACTER_BY_ID = gql`
   }
 `
 
+const detailsKeys = [
+  {text:"species", key:"species"},
+  {text:"gender", key:"gender"},
+  // {text:"type", key:"type"},
+  {text:"status", key:"status"},
+];
+
+
+function useGetUserQueryWithLocalStore(gqlQuery, args){
+  // const [localData, setLocalData] = useState(null);
+  const localStore = useLocalStore();
+  const id = args && args.variables && args.variables.id;
+  
+  const localChars = localStore.cachedCharacters.get();
+  if(id && localChars && localChars[id]){
+    console.log("got local char?", localChars[id]);
+    return {loading: null, error: null, data: { character: localChars[id] }};
+  }
+  return useQuery(gqlQuery, args);
+}
+
+
+
 export const Profile: React.FC = () => {
   let params = useParams();
   const id = params && params.id;
-  const { loading, error, data, refetch } = useQuery(GET_CHARACTER_BY_ID, {variables:{id}}); 
+  // const { loading, error, data } = useQuery(GET_CHARACTER_BY_ID, {variables:{id}}); 
+  const { loading, error, data } = useGetUserQueryWithLocalStore(GET_CHARACTER_BY_ID, {variables:{id}}); 
 
   
   console.log("params..", params, id);
@@ -73,9 +105,22 @@ export const Profile: React.FC = () => {
                 <Typography component="div" variant="h5">
                   { character.name }
                 </Typography>
-                <Typography variant="subtitle1" color="text.secondary" component="div">
+                {/* <Typography variant="subtitle1" color="text.secondary" component="div">
                   Mac Miller
-                </Typography>
+                </Typography> */}
+                {
+                  detailsKeys.map(({text, key}) => 
+                    <>
+                      <Typography variant="caption" color="text.secondary">
+                        {text} 
+                      </Typography>
+                      <br/>
+                      <Typography variant="subtitle1" color="text.secondary" style={{ lineHeight:0.8, marginBottom: "8px" }}>
+                        { character[key] }
+                      </Typography>
+                    </>
+                  )
+                }
               </>
             }
           </CardContent>

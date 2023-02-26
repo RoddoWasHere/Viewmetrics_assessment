@@ -15,6 +15,7 @@ import MainLayout from './components/mainLayout';
 import UserListing from './views/UserListing';
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 import Videos from './views/Videos';
+import { LocalStoreProvider } from './utils/localStore';
 // const process = require('process');
 
 const rootNode = document.getElementById('app');
@@ -58,16 +59,16 @@ const router = createBrowserRouter([
         // ],
       },
       {
-        path: "videos",
+        path: "upload-video",
         element: <Videos/>,
         // loader: teamLoader,
-        children: [
-          {
-            path: "page/:pageNumber",
-            // element: <Profile />,
-            // loader: teamLoader,
-          },
-        ]
+        // children: [
+        //   {
+        //     path: "page/:pageNumber",
+        //     // element: <Profile />,
+        //     // loader: teamLoader,
+        //   },
+        // ]
       },
     ],
   },
@@ -101,9 +102,11 @@ const router = createBrowserRouter([
 
 if(rootNode){
   createRoot(rootNode).render(
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
+    <LocalStoreProvider>
+      <ApolloProvider client={client}>
+        <RouterProvider router={router}/>
+      </ApolloProvider>
+    </LocalStoreProvider>
   );
   // createRoot(rootNode)
   //   .render(<App />);

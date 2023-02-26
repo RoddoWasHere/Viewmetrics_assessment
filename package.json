@@ -1,7 +1,8 @@
 {
   "scripts": {
     "dev": "webpack serve --mode development",
-    "build": "webpack --mode production --progress --hide-modules"
+    "build": "webpack build --mode production --progress --hide-modules",
+    "build2": "webpack --mode production"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -29,6 +30,7 @@
     "@emotion/styled": "^11.3.0",
     "@mui/icons-material": "^5.0.1",
     "@mui/material": "^5.0.2",
+    "@mui/x-data-grid": "^5.17.24",
     "axios": "^0.21.4",
     "dotenv": "^16.0.3",
     "graphql": "^15.6.0",

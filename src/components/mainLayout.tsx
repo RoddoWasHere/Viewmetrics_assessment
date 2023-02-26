@@ -13,11 +13,10 @@ const MainContainer = styled.div`
 `;
 
 const LeftPageContainer = styled.div`
-  width: 40%;
-  min-width: 300px;
+  width: 30%;
+  min-width: 250px;
   height: 100%;
   display: flex;
-  background: yellow;
   flex-direction: column;
   align-items: flex-end;
   padding: 0px 12px;

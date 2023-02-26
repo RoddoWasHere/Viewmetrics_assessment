@@ -20,8 +20,8 @@ const pages = [
       link:"/users"
   },
   {
-      text:'Videos',
-      link:"/videos"
+      text:'Upload Video',
+      link:"/upload-video"
   },
   // {
   //     text:'Blog',
@@ -103,9 +103,11 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.text} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page.text}</Typography>
-                </MenuItem>
+                <Link to={page.link}>
+                  <MenuItem key={page.text} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">{page.text}</Typography>
+                  </MenuItem>
+                </Link>
               ))}
             </Menu>
           </Box>

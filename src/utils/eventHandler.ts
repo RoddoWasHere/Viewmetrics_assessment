@@ -18,11 +18,11 @@ import { Subject, Subscription } from "rxjs";
 
 // global.subject = subject;
 
-interface EventListener extends Subscription {}
+export interface EventListener extends Subscription {}
 
 export class EventHandler<T> {
   private subject = new Subject<T>();
-  addEventListener(func: (data: T) => void): EventListener {
+  addEventListener(func: (data: T) => void): Subscription {
     return this.subject.subscribe({
       next: func
     });
