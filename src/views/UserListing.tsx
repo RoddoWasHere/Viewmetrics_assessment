@@ -8,29 +8,22 @@ import {
   Pagination,
   Stack,
   Typography,
-  RadioGroup,
   FormControlLabel,
-  Radio,
-  AccordionSummary,
-  IconButton,
   Button,
   Card,
   Paper,
   Link,
-  Breadcrumbs,
-  Modal
+  useTheme
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FilterAccordian, { AccordionSummaryCustom, RadioFilterAccordian } from "../components/filterAccordion";
+import { AccordionSummaryCustom, RadioFilterAccordian } from "../components/filterAccordion";
 import ListIcon from '@mui/icons-material/List';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { Users } from "../Users";
 import UsersDataGrid from "../components/usersDataGrid";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { useLocalStore } from "../utils/localStore";
+import { ILookup, useLocalStore } from "../utils/localStore";
 import EditUser from "../components/editUser";
 import ModalBasic from "../components/modalBasic";
 import AddIcon from '@mui/icons-material/Add';
+import { IconButtonCustom } from "../components/customComponents";
 
 const CardCustom = styled(Card)`
   height: 100%;
@@ -60,9 +53,9 @@ const UserCardContainer = styled.div`
   padding: 0px 12px 24px 12px;
 `;
 
-const FormControlLabelCustom =  styled(FormControlLabel)`
-  height: 28px;
-`;
+// const FormControlLabelCustom =  styled(FormControlLabel)`
+//   height: 28px;
+// `;
 
 const FiltersContainer =  styled.div`
   width: 100%;
@@ -121,10 +114,6 @@ export const statusOptions = [
   "unknown",
 ];
 
-function getFilters(){
-
-}
-
 interface IFilterParams {
   species: string
   gender: string
@@ -137,20 +126,27 @@ const defaultFilters: IFilterParams = {
   status: '',
 }
 
-const IconButtonCustom = styled(IconButton)`
+const IconButtonSquare = styled(IconButtonCustom)`
   border-radius: 5px;
   padding: 5px;
 `
 
-function ListingTypeToggle({useList, setUseList}){
-  
+interface IListingTypeToggleProps {
+  useList: boolean
+  setUseList: (useList: boolean) => void
+}
+
+function ListingTypeToggle({useList, setUseList}: IListingTypeToggleProps){
+  const theme = useTheme();
+  const selectedColor = theme.palette.primary.main;
+
   return <>
-    <IconButtonCustom title="List view" onClick={()=>setUseList(true)} aria-label="list" variant="contained" style={!useList ? {} : {background: '#ccc'}}>
+    <IconButtonSquare contrast title="List view" onClick={()=>setUseList(true)} aria-label="list" style={!useList ? {} : {background: selectedColor}}>
       <ListIcon />
-    </IconButtonCustom>
-    <IconButtonCustom  title="Cards view" onClick={()=>setUseList(false)} aria-label="cards" variant="contained" style={useList ? {} : {background: '#ccc'}}>
+    </IconButtonSquare>
+    <IconButtonSquare contrast title="Cards view" onClick={()=>setUseList(false)} aria-label="cards" style={useList ? {} : {background: selectedColor}}>
       <ViewModuleIcon />
-    </IconButtonCustom>
+    </IconButtonSquare>
   </>
 }
 
@@ -162,6 +158,8 @@ export interface IRMCharacter {
   gender: string
   type: string
   status: string
+
+  isDeleted?: boolean
 }
  
 const resultsPerPage = 20;
@@ -185,6 +183,8 @@ const filterLocal = (char: IRMCharacter, filterParams: IFilterParams) => {
 export default function UserListing(){
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IRMCharacter | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [confirmModalText, setConfirmModalText] = useState("");
 
   const localStore = useLocalStore();
   const [useList, setUseListAux] = useState(localStore.appSettings.get().useList);
@@ -214,37 +214,43 @@ export default function UserListing(){
   const charactersTp = data && data.characters && data.characters.results;
   const resultInfo = data && data.characters && data.characters.info;
   const pageCount = resultInfo && resultInfo.pages;
-  const characters = charactersTp && charactersTp.map(c => ({...c}));
+  const charactersCp = charactersTp && charactersTp.map(c => ({...c}));
   // window.debug = characters;
 
-  if(characters){//retrieve/store charachers
+  const characters: IRMCharacter[] = [];
+
+  if(charactersCp){//retrieve/store charachers
     const cp = localStore.cachedCharacters.get();
-    window.debug = cp;
-    console.log("cached chars", cp)
-    characters.forEach((c: IRMCharacter, i: number) => {
+    const newCharactersList = []; 
+    const addedLookup: ILookup<any> = {};
+
+    charactersCp.forEach((c: IRMCharacter, i: number) => {
       if(cp[c.id]){//replace
-        characters[i] = cp[c.id];
+        charactersCp[i] = cp[c.id];
       }else{//cache
-        cp[c.id] = characters[i];
+        cp[c.id] = charactersCp[i];
+      }
+
+      addedLookup[c.id] = cp;
+
+      if(!cp[c.id]?.isDeleted){ //ignore deleted
+        characters.push(charactersCp[i]);
       }
     });
     Object.keys(cp).forEach((key: string, i: number) => {
       const char = cp[key];
-      if(!characters[char.id]){//add
-        //testing
-        if(char.id.indexOf("local") == 0 && characters.length < resultsPerPage && filterLocal(char, filters)){
+      if(!addedLookup[char.id] && characters.length < resultsPerPage){//add
+        if(char.id.indexOf("local") == 0 && !char.isDeleted && filterLocal(char, filters)){
           //add new local stored chars if last page
-          console.log("got local char", char);
           characters.push(char);
+          addedLookup[char.id] = char;
         }
       }
-      // }else{//cache
-      //   cp[c.id] = characters[i];
-      // }
     });
-
     localStore.cachedCharacters.set(cp);
   }
+
+  console.log("got characters:", characters);
 
   const updateCachedCharacter = (d: IRMCharacter) => {
     const cp = localStore.cachedCharacters.get();
@@ -293,12 +299,42 @@ export default function UserListing(){
     </Typography>,
   ];
 
+  const showConfirmModal = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  
+  const deleteUser = () => {
+    if(selectedUser){
+      selectedUser.isDeleted = true;
+
+      updateCachedCharacter(selectedUser);
+    }
+  };
+
   return <>
+    {/* Confirm delete modal */}
+    <ModalBasic
+      isOpen={isConfirmModalOpen}
+      setIsOpen={setIsConfirmModalOpen}
+    >
+      <div style={{}}>
+        <Typography>
+          Are you sure you want to delete this user?
+        </Typography>
+        <p/>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Button variant="contained" onClick={()=>setIsConfirmModalOpen(false)}>Cancel</Button>
+          <div style={{ width: "10px" }}></div>
+          <Button variant="contained" onClick={()=>{ deleteUser(); setIsConfirmModalOpen(false);}}>OK</Button>
+        </div>
+      </div>
+    </ModalBasic>
     <ModalBasic
       isOpen={isEditModalOpen}
       setIsOpen={setIsEditModalOpen}
     >
-      <Paper>
+      <>
         <EditUser
           userData={selectedUser}
           onUpdateClicked={(d)=>{
@@ -312,14 +348,17 @@ export default function UserListing(){
             setIsEditModalOpen(false);
           }}
         />
-      </Paper>
+      </>
     </ModalBasic>
     <LeftPanelLayout
+      pageTitle="Users"
       leftPageContents={
         <FiltersContainer>
-          <AccordionSummaryCustom style={{ background: "white" }}>
-            <Typography><b>Filters</b></Typography>
-          </AccordionSummaryCustom>
+          <Paper>
+            <AccordionSummaryCustom>
+              <Typography><b>Filters</b></Typography>
+            </AccordionSummaryCustom>
+          </Paper>
           <RadioFilterAccordian
             title="Species"
             options={speciesOptions}
@@ -340,7 +379,7 @@ export default function UserListing(){
       mainPageContents={
         characters && characters.length > 0 &&
         <div style={{ width: "100%" }}>
-          <div style={{  marginBottom: "12px" }}>
+          <Paper elevation={0} style={{  marginBottom: "12px", width: "unset", background: "none" }}>
             <Typography>
              {resultInfo.count} results
             </Typography>
@@ -355,22 +394,29 @@ export default function UserListing(){
                 </Breadcrumbs>
               </Stack> */}
               <ExpanderSpan/>
-              <Button variant="contained" onClick={() => {setSelectedUser({});setIsEditModalOpen(true);}}>
+              <Button variant="contained" onClick={() => {setSelectedUser({}); setIsEditModalOpen(true);}}>
                 <AddIcon/>
                 Add
               </Button>
             </div>
-          </div>
+          </Paper>
           <UserListingContainer>
             {
               useList
-              ? <CardCustom><UsersDataGrid usersData={characters}/></CardCustom>
+              ? <CardCustom>
+                  <UsersDataGrid 
+                    usersData={characters} 
+                    onEdit={(char)=>{setSelectedUser(char); setIsEditModalOpen(true)}}
+                    onDelete={(char)=>{setSelectedUser(char); setIsConfirmModalOpen(true)}}
+                  />
+                </CardCustom>
               : characters.map(c => 
                 <UserCardContainer>
                   <UserCard
                     key={c.id}
                     userData={c}
-                    onEditClick={() => {setSelectedUser(c);setIsEditModalOpen(true);}}
+                    onEditClick={() => {setSelectedUser(c); setIsEditModalOpen(true);}}
+                    onDeleteClick={() => {setSelectedUser(c); showConfirmModal();}}
                   />
                 </UserCardContainer>
               )

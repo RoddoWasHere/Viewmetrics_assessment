@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { Paper } from '@mui/material';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -25,9 +26,9 @@ export default function ModalBasic({isOpen, setIsOpen, children}) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Paper sx={style}>
           { children }
-        </Box>
+        </Paper>
       </Modal>
     </div>
   );

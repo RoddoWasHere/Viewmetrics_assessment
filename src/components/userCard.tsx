@@ -16,9 +16,12 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Link } from "react-router-dom";
-import { IRMCharacter } from '../views/UserListing';
+import { ExpanderDiv, ExpanderSpan, IRMCharacter } from '../views/UserListing';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import styled from '@emotion/styled';
+import { IconButtonCustom } from './customComponents';
+
 
 // interface ExpandMoreProps extends IconButtonProps {
 //   expand: boolean;
@@ -43,29 +46,28 @@ const LinkCustom = styled(Link)`
 interface IUserCardProps {
   userData: IRMCharacter
   onEditClick?: () => void
+  onDeleteClick?: () => void
 }
 
 // "id", "name", "image", "species", "gender", "type", "status"
 
 const detailsKeys = [
   {text:"species", key:"species"},
-  {text:"gender", key:"gender"},
+  // {text:"gender", key:"gender"},
   // {text:"type", key:"type"},
-  {text:"status", key:"status"},
+  // {text:"status", key:"status"},
 ];
 
-export default function UserCard({ userData, onEditClick }: IUserCardProps) {
+export default function UserCard({ userData, onEditClick, onDeleteClick }: IUserCardProps) {
   const [expanded, setExpanded] = React.useState(false);
   const { id, name, image, species, gender, type, status } = userData;
-
-  console.log("user card data?", id, name, image)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   return (
-    <Card sx={{ maxWidth: 220 }}>
+    <Card sx={{ maxWidth: 200 }}>
       {/* <Link to={`/user/${id}`}> */}
         <CardHeader
             // avatar={
@@ -73,12 +75,12 @@ export default function UserCard({ userData, onEditClick }: IUserCardProps) {
             //     R
             //   </Avatar>
             // }
-            action={
-            <IconButton aria-label="settings" title="edit" onClick={onEditClick}>
-                <EditIcon />
-                {/* <MoreVertIcon /> */}
-            </IconButton>
-            }
+            // action={
+            // <IconButtonCustom aria-label="settings" title="edit" onClick={onEditClick}>
+            //     {/* <EditIcon /> */}
+            //     <MoreVertIcon />
+            // </IconButtonCustom>
+            // }
             title={
               <LinkCustom to={`/user/${id}`}>
                 <Typography variant="button">{name}</Typography>
@@ -118,11 +120,20 @@ export default function UserCard({ userData, onEditClick }: IUserCardProps) {
         <Typography variant="subtitle1" color="text.secondary">
           { species }
         </Typography> */}
+        <div style={{ display: "flex" }}>
+          <ExpanderSpan>&nbsp;</ExpanderSpan>
+          <IconButtonCustom aria-label="settings" title="edit" onClick={onEditClick}>
+            <EditIcon />
+          </IconButtonCustom>
+          <IconButtonCustom aria-label="settings" title="delete" onClick={onDeleteClick}>
+            <DeleteIcon />
+          </IconButtonCustom>
+        </div>
       </CardContent>
       {/* <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
+        <IconButtonCustom aria-label="add to favorites">
           <FavoriteIcon />
-        </IconButton>
+        </IconButtonCustom>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>

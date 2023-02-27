@@ -9,10 +9,12 @@ import {
     Button,
     Radio,
     RadioGroup,
-    FormControlLabel
+    FormControlLabel,
+    useTheme
   } from '@mui/material';
-  import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-  import styled from '@emotion/styled';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import styled from '@emotion/styled';
+import { ButtonCustom } from './customComponents';
 
   
 export const AccordionSummaryCustom = styled(AccordionSummary)`
@@ -56,7 +58,7 @@ export default function FilterAccordian({title, children, onClear, showClear}){
     >
       <Typography>{title}</Typography>
       <ExpanderDiv/>
-      {showClear && <Button onClick={onClear} style={{padding:0}}>Clear</Button>}
+      {showClear && <ButtonCustom onClick={onClear} style={{padding:0}}>Clear</ButtonCustom>}
     </AccordionSummaryCustom>
     <AccordionDetails>
       { children}
@@ -66,6 +68,7 @@ export default function FilterAccordian({title, children, onClear, showClear}){
 
 export function RadioFilterAccordian({title, options, onSetValue}){
   const [value, setValueAux] = useState('');
+  const theme = useTheme();
 
   const setValue = (value: string) => {
     onSetValue && onSetValue(value);
@@ -80,7 +83,7 @@ export function RadioFilterAccordian({title, options, onSetValue}){
         value={value}
       >
         {
-          options.map(s => <FormControlLabelCustom value={s} control={<Radio/>} label={s} />)
+          options.map(s => <FormControlLabelCustom value={s} control={<Radio style={{color: theme?.palette?.text?.primary}}/>} label={s} />)
         }
 
       </RadioGroup>

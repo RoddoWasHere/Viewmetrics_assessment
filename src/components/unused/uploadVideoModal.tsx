@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 import { VideoPreview } from './videoPreview';
-import { uploadVideo2 } from '../services/apiService';
+import { uploadVideo2 } from '../../services/apiService';
 
 
 

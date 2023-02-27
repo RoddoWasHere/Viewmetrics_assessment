@@ -13,6 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from "react-router-dom";
+import { IconButtonCustom, LinkCustom } from './customComponents';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const pages = [
   {
@@ -23,10 +25,6 @@ const pages = [
       text:'Upload Video',
       link:"/upload-video"
   },
-  // {
-  //     text:'Blog',
-  //     link:""
-  // }
 ];
     
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -103,11 +101,11 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <Link to={page.link}>
+                <LinkCustom to={page.link} contrast>
                   <MenuItem key={page.text} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page.text}</Typography>
+                    <Typography color="primary" textAlign="center">{page.text}</Typography>
                   </MenuItem>
-                </Link>
+                </LinkCustom>
               ))}
             </Menu>
           </Box>
@@ -132,23 +130,25 @@ function NavBar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page: any) => (
-              <Link to={page.link}>
+              <LinkCustom to={page.link} contrast>
                 <Button
                   key={page.text}
                   onClick={() => handleCloseNavMenu()}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
+                  sx={{ my: 2, display: 'block' }}
                 >
                   {page.text}
                 </Button>
-              </Link>
+              </LinkCustom>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
+              <LinkCustom to="/settings">
+                <IconButtonCustom sx={{ p: 0 }} contrast>
+                  <SettingsIcon/>
+                </IconButtonCustom>
+              </LinkCustom>
             </Tooltip>
             <Menu
               sx={{ mt: '45px' }}

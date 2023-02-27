@@ -1,6 +1,8 @@
 import { EventHandler, EventListener } from "./EventHandler";
 import React, { useState, useEffect, ReactNode, useContext } from 'react';
 import { IRMCharacter } from "../views/UserListing";
+import { defaultTheme } from "../providers/themeProvider";
+import { Theme } from "@mui/material";
 
 
 interface IGetSetValue<T>{
@@ -63,7 +65,7 @@ interface IStatefulStoreObject {
   [name:string]: StatefulStoreValue<any> // avoid nesting (for now)
 }
 
-interface ILookup<T> {
+export interface ILookup<T> {
   [name:string]: T
 }
 
@@ -135,10 +137,16 @@ class StatefulStoreObject {
 
 interface IAppSettings {
   useList: boolean
+  themeName: ThemeName
+}
+
+export enum ThemeName {
+  default = "default",
+  rickNMorty = "rickNMorty",
 }
 
 interface IStoreData extends IStatefulStoreObject {
-  a: StatefulStoreValue<any> //for testing
+  // a: StatefulStoreValue<any> //for testing
   appSettings: StatefulStoreValue<IAppSettings>
   cachedCharacters: StatefulStoreValue<ILookup<IRMCharacter>>
 }
@@ -146,7 +154,8 @@ interface IStoreData extends IStatefulStoreObject {
 const storeData: IStoreData = {
   a: new StatefulStoreValue(1),
   appSettings: new StatefulStoreValue<IAppSettings>({
-    useList: true
+    useList: true,
+    themeName: ThemeName.default,
   }),
   cachedCharacters: new StatefulStoreValue<ILookup<IRMCharacter>>({}),
 };
@@ -197,5 +206,10 @@ export function LocalStoreProvider({children}: ILocalStoreProviderProps){
 }
 
 export function useLocalStore(): IStoreData {
-  return useContext(LocalStoreContext);
+  return useContext<IStoreData>(LocalStoreContext);
+}
+
+
+export function clearLocalStore(){
+  window.localStorage.setItem(localStoreKey, "");
 }

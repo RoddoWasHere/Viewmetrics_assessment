@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import NavBar from "./navBar";
 import React, { ReactNode } from 'react';
+import { Typography, useTheme } from '@mui/material';
+import { PaperCustom } from './customComponents';
 
 const MainContainer = styled.div`
   width: 100%;
@@ -8,7 +10,7 @@ const MainContainer = styled.div`
   min-height: calc(100vh - 70px);
   display: flex;
   flex-direction: row;
-  background: #eee;
+  ${props => props.background ? `background: ${props.background};`:'background: #eee;'}
   padding: 20px 0px;
 `;
 
@@ -49,11 +51,19 @@ export default function MainLayout({ children }: IMainLayoutProps){
 interface ILeftPanelLayoutProps {
   leftPageContents?: ReactNode
   mainPageContents: ReactNode
+  pageTitle?: string
 }
 
-export function LeftPanelLayout({ leftPageContents, mainPageContents }: ILeftPanelLayoutProps){
+export function LeftPanelLayout({ leftPageContents, mainPageContents, pageTitle }: ILeftPanelLayoutProps){
+  const theme = useTheme();
+
   return <>
-    <MainContainer>
+    { pageTitle &&
+      <PaperCustom style={{ width: "unset" }}>
+        <Typography variant="h4">{ pageTitle }</Typography>
+      </PaperCustom>
+    }
+    <MainContainer background={theme.palette.background.default}>
       { leftPageContents && 
         <LeftPageContainer>
           { leftPageContents }

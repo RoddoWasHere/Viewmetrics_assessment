@@ -42,16 +42,16 @@ export function VideoPreview({videoUrl, mimeType}){
     loadVideo();
   }, [])
 
-  return (
-    <VideoOverlayRel>
+  return (<>
+    {/* <VideoOverlayRel> */}
       {/* <VideoOverlayContainer> */}
         {/* <ProgressCircular value={50}/> */}
       {/* </VideoOverlayContainer> */}
-      <video style={{width: "100%"}} onChange={()=>console.log()} ref={videoRef} controls width="250">
+      <video style={{width: "100%", maxWidth: "120vh"}} onChange={()=>console.log()} ref={videoRef} controls width="250">
         <source src={videoUrl} type={mimeType}/>
       </video>
-    </VideoOverlayRel>
-    );
+    {/* </VideoOverlayRel> */}
+    </>);
 }
 
 /* 

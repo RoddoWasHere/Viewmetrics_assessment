@@ -13,6 +13,7 @@ module.exports = (env) => {
       extensions: ['.tsx', '.ts', '.jsx', '.js'],
     },
     devServer: {
+      port: 8000,
       historyApiFallback: true,
       static: {       
         directory: path.resolve(__dirname, './dist')

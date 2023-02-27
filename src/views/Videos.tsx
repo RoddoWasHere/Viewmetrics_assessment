@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
 import { LeftPanelLayout } from '../components/mainLayout';
-import { Modal, Box, Typography, TextField, Button } from '@mui/material';
+import { Modal, Box, Typography, TextField, Button, Paper } from '@mui/material';
 import { uploadVideo, uploadVideo2 } from '../services/apiService';
 import { VideoPreview } from '../components/videoPreview';
 import { useLocalStore } from '../utils/localStore';
 import ProgressModal from '../components/progressModal';
-import UploadVideoModal from '../components/uploadVideoModal';
+import UploadVideoModal from '../components/unused/uploadVideoModal';
 import { EventHandler } from '../utils/EventHandler';
 import ModalBasic from '../components/modalBasic';
 import styled from '@emotion/styled';
+import { PaperCustom } from '../components/customComponents';
+import { VideoPlayerCustom } from '../components/videoPlayerCustom';
 
 
 const ConfirmModalContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
+
+const VideoViewContainer = styled(Paper)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+`;
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -135,6 +144,7 @@ export default function Videos(){
       </Box>
     </Modal> */}
     <LeftPanelLayout
+      pageTitle="Upload video"
       mainPageContents={
         <>
           {/* <div>Videos</div>
@@ -142,15 +152,16 @@ export default function Videos(){
           <Button onClick={() => localStore.a.set("new val")}>Set Store value</Button>
           <div><button onClick={() => setIsModalOpen(true)}>Upload video</button></div> */}
           <div style={{ width: "100%"}}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Upload Video
-            </Typography>
-            <VideoPreview videoUrl={videoData.videoUrl} mimeType={videoData.mimeType}/>
+            <VideoViewContainer>
+              {/* <VideoPreview videoUrl={videoData.videoUrl} mimeType={videoData.mimeType}/> */}
+              <VideoPlayerCustom videoUrl={videoData.videoUrl} mimeType={videoData.mimeType}/>
+              <p/>
               <TextField type="file" label="" variant="outlined" onChange={onFileChange}/>
               <Button disabled={!videoData.file} variant="contained" type="submit" onClick={handleSubmit}>Upload</Button>
+            </VideoViewContainer>
           </div>
-        </>
-      }
+        
+      </>}
     />
     </>;
   
