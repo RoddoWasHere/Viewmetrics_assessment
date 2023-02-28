@@ -7,12 +7,10 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { Link } from "react-router-dom";
 import { IconButtonCustom, LinkCustom } from './customComponents';
 import SettingsIcon from '@mui/icons-material/Settings';
 
@@ -35,9 +33,6 @@ function NavBar() {
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
@@ -101,8 +96,8 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <LinkCustom to={page.link} contrast>
-                  <MenuItem key={page.text} onClick={handleCloseNavMenu}>
+                <LinkCustom to={page.link} contrast key={page.text}>
+                  <MenuItem onClick={handleCloseNavMenu}>
                     <Typography color="primary" textAlign="center">{page.text}</Typography>
                   </MenuItem>
                 </LinkCustom>
@@ -130,7 +125,7 @@ function NavBar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page: any) => (
-              <LinkCustom to={page.link} contrast>
+              <LinkCustom to={page.link} contrast key={page.text}>
                 <Button
                   key={page.text}
                   onClick={() => handleCloseNavMenu()}

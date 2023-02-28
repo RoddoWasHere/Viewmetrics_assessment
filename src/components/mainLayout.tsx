@@ -2,9 +2,15 @@ import styled from '@emotion/styled';
 import NavBar from "./navBar";
 import React, { ReactNode } from 'react';
 import { Typography, useTheme } from '@mui/material';
-import { PaperCustom } from './customComponents';
+import { IconButtonCustom, PaperCustom } from './customComponents';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { useNavigate } from 'react-router';
 
-const MainContainer = styled.div`
+interface IMainContainerProps {
+  background: string
+}
+
+const MainContainer = styled.div<IMainContainerProps>`
   width: 100%;
   height: 100%;
   min-height: calc(100vh - 70px);
@@ -56,10 +62,14 @@ interface ILeftPanelLayoutProps {
 
 export function LeftPanelLayout({ leftPageContents, mainPageContents, pageTitle }: ILeftPanelLayoutProps){
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return <>
     { pageTitle &&
-      <PaperCustom style={{ width: "unset" }}>
+      <PaperCustom style={{ width: "unset", display: "flex" }}>
+        <IconButtonCustom onClick={() => navigate(-1)} title="back">
+          <ArrowBackIosIcon/>
+        </IconButtonCustom>
         <Typography variant="h4">{ pageTitle }</Typography>
       </PaperCustom>
     }

@@ -9,7 +9,6 @@ const LinkCustomStyled = styled(Link)`
   &:hover{
     font-weight: bold !important;
   }
-
 `;
 
 export const PaperCustom = styled(Paper)`
@@ -20,7 +19,6 @@ export const PaperCustom = styled(Paper)`
 export function ButtonCustom(props: any){
   const theme = useTheme();
   const textColor = props?.contrast && props.variant!="contained" ? theme?.palette?.primary?.contrastText : theme?.palette?.text?.primary;
-  console.log("ButtonCustom textColor", textColor);
   return <Button
     {...props}
     style={{ color: textColor, ...props.style }}
@@ -40,10 +38,7 @@ export function IconButtonCustom(props: any){
 
 export function LinkCustom(props: any){
   const theme = useTheme();
-  // const textColor = props?.contrast == 'contained' ? theme?.palette?.primary?.contrastText : theme?.palette?.text?.primary;
-
   return <LinkCustomStyled 
-    // style={{color: textColor}} 
     {...props}
   />;
 }

@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Stack, Theme, Typography } from "@mui/material"
-import React, { useState } from "react"
+import { Button, Paper } from "@mui/material"
+import React from "react"
 import { useNavigate } from "react-router";
 import { LeftPanelLayout } from "../components/mainLayout"
-import { defaultTheme, rickNMortyTheme } from "../providers/themeProvider";
+import SelectInputCustom from "../components/selectInputCustom";
 import { clearLocalStore, ThemeName, useLocalStore } from "../utils/localStore";
 import { ExpanderDiv } from "./UserListing";
 
@@ -22,44 +22,6 @@ const PaperSettingsContainer =  styled(Paper)`
   align-items: center;
   padding: 20px
 `;
-
-// const themes = {
-//   "default": defaultTheme,
-//   "rickNMorty": rickNMortyTheme,
-// };
-
-interface SelectOption<T> {
-  text: string
-  value: T
-}
-
-interface ISelectCustomProps<T> {
-  title: string
-  defaultValue: T
-  options: SelectOption<T>[]
-  onChange?: (value: T) => void
-}
-
-function SelectCustom<T>({ title, defaultValue, options, onChange }: ISelectCustomProps<T>){
-  return <FormControl style={{ width: "250px" }}>
-    <InputLabel id="demo-simple-select-label">{title}</InputLabel>
-    <Select
-      labelId="demo-simple-select-label"
-      id="demo-simple-select"
-      defaultValue={defaultValue}
-      label={title}
-      onChange={(e) => onChange && onChange(e.target.value as T)}
-    >
-      {
-        options.map(o => 
-          <MenuItem key={o.text} value={o.value}>{ o.text }</MenuItem>
-        )
-      }
-    </Select>
-  </FormControl>
-
-}
-
 
 enum ListingType {
   ListView = "ListView",
@@ -87,7 +49,7 @@ export default function Settings(){
         <SettingsContainer>
           <PaperSettingsContainer>
             <p/>
-            <SelectCustom<ThemeName> 
+            <SelectInputCustom<ThemeName> 
               title="Theme"
               defaultValue={currentThemeName}
               options={[
@@ -97,7 +59,7 @@ export default function Settings(){
               onChange={(v) => {setTheme(v)}}
             />
             <p/>
-            <SelectCustom<ListingType> 
+            <SelectInputCustom<ListingType> 
               title="Listing view"
               defaultValue={ListingType.ListView}
               options={[

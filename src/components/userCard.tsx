@@ -21,22 +21,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styled from '@emotion/styled';
 import { IconButtonCustom } from './customComponents';
-
-
-// interface ExpandMoreProps extends IconButtonProps {
-//   expand: boolean;
-// }
-
-// const ExpandMore = styled((props: ExpandMoreProps) => {
-//   const { expand, ...other } = props;
-//   return <IconButton {...other} />;
-// })(({ theme, expand }) => ({
-//   transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-//   marginLeft: 'auto',
-//   transition: theme.transitions.create('transform', {
-//     duration: theme.transitions.duration.shortest,
-//   }),
-// }));
+import { Skeleton } from '@mui/material';
 
 const LinkCustom = styled(Link)`
   text-decoration: none;
@@ -48,8 +33,6 @@ interface IUserCardProps {
   onEditClick?: () => void
   onDeleteClick?: () => void
 }
-
-// "id", "name", "image", "species", "gender", "type", "status"
 
 const detailsKeys = [
   {text:"species", key:"species"},
@@ -68,29 +51,15 @@ export default function UserCard({ userData, onEditClick, onDeleteClick }: IUser
 
   return (
     <Card sx={{ maxWidth: 200 }}>
-      {/* <Link to={`/user/${id}`}> */}
-        <CardHeader
-            // avatar={
-            //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            //     R
-            //   </Avatar>
-            // }
-            // action={
-            // <IconButtonCustom aria-label="settings" title="edit" onClick={onEditClick}>
-            //     {/* <EditIcon /> */}
-            //     <MoreVertIcon />
-            // </IconButtonCustom>
-            // }
-            title={
-              <LinkCustom to={`/user/${id}`}>
-                <Typography variant="button">{name}</Typography>
-              </LinkCustom>
-            }
-            titleTypographyProps={{ style: { fontSize:"14px" } }}
-            subheader=" "
-            // subheader="September 14, 2016"
-        />
-      {/* </Link> */}
+
+      <CardHeader
+          title={
+            <LinkCustom to={`/user/${id}`}>
+              <Typography variant="button">{name}</Typography>
+            </LinkCustom>
+          }
+          titleTypographyProps={{ style: { fontSize:"14px" } }}
+      />
       <CardMedia
         component="img"
         height="220"
@@ -111,15 +80,6 @@ export default function UserCard({ userData, onEditClick, onDeleteClick }: IUser
             </>
           )
         }
-        {/* <p/>
-        <Button variant="contained">Edit</Button> */}
-        {/* <Typography variant="caption" color="text.secondary">
-          Species 
-        </Typography>
-        <br/>
-        <Typography variant="subtitle1" color="text.secondary">
-          { species }
-        </Typography> */}
         <div style={{ display: "flex" }}>
           <ExpanderSpan>&nbsp;</ExpanderSpan>
           <IconButtonCustom aria-label="settings" title="edit" onClick={onEditClick}>
@@ -130,51 +90,45 @@ export default function UserCard({ userData, onEditClick, onDeleteClick }: IUser
           </IconButtonCustom>
         </div>
       </CardContent>
-      {/* <CardActions disableSpacing>
-        <IconButtonCustom aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButtonCustom>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-            aside for 10 minutes.
-          </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-            medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-            occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-            large plate and set aside, leaving chicken and chorizo in the pan. Add
-            pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-            stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is absorbed,
-            15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-            mussels, tucking them down into the rice, and cook again without
-            stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
-          </Typography>
-        </CardContent>
-      </Collapse> */}
+    </Card>
+  );
+}
+
+export function UserCardSkelton(){
+  return (
+    <Card sx={{ maxWidth: 200 }}>
+
+      <Skeleton animation="wave" variant="rectangular" width={200} height={220} />
+      <CardContent>
+        {
+          detailsKeys.map(({text, key}) => 
+            <>
+              <Skeleton
+                animation="wave"
+                height={10}
+                width="80%"
+                style={{ marginBottom: 6 }}
+              />
+              <br/>
+              <Skeleton
+                animation="wave"
+                height={10}
+                width="40%"
+                style={{ marginBottom: 6 }}
+              />
+            </>
+          )
+        }
+        <div style={{ display: "flex" }}>
+          <ExpanderSpan>&nbsp;</ExpanderSpan>
+          <IconButtonCustom aria-label="settings" title="edit" disabled>
+            <EditIcon />
+          </IconButtonCustom>
+          <IconButtonCustom aria-label="settings" title="delete" disabled>
+            <DeleteIcon />
+          </IconButtonCustom>
+        </div>
+      </CardContent>
     </Card>
   );
 }

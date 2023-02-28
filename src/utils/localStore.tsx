@@ -10,19 +10,6 @@ interface IGetSetValue<T>{
     get: () => T
 }
 
-// export class GetSetValue<T> implements IGetSetValue<T> {
-//     private value: T;
-//     constructor(value: T){
-//         this.value = value;
-//     }
-//     set(value: T){
-//         this.value = value;
-//     }
-//     get(): T{
-//         return this.value;
-//     }
-// }
-
 export class StatefulStoreValue<T> implements IGetSetValue<T> {
   __type: string = "StatefulStoreValue";
   private value: T;
@@ -44,8 +31,6 @@ export class StatefulStoreValue<T> implements IGetSetValue<T> {
   }
 }
 
-
-
 const LocalStoreContext = React.createContext({});
 
 const localStoreKey = 'assessment_store_123';
@@ -59,7 +44,6 @@ function mapObject(obj: ILookupAny, func: (key:string, value:any) => any){
     func(key, obj[key]);
   });
 }
-
 
 interface IStatefulStoreObject {
   [name:string]: StatefulStoreValue<any> // avoid nesting (for now)
@@ -75,10 +59,7 @@ class StatefulStoreObject {
   static serialize(fromData: IStatefulStoreObject){
     const result: ILookupAny = {};
     mapObject(fromData, (k,v)=> {
-      // if(typeof v == 'object' && v.constructor.name == "StatefulStoreValue"){
       if(typeof v == 'object' && v.__type == "StatefulStoreValue"){
-        //of type 'StatefulStoreValue'
-        // console.log("class type?", fromData[k]);
         result[k] = v.get();
       }else if(typeof v == 'object'){
         //object...recur
@@ -89,51 +70,15 @@ class StatefulStoreObject {
   }
   static deserialize(objToSet: IStatefulStoreObject, fromData: ILookupAny){
     mapObject(fromData, (k,v) => {
-      // console.log("trying to set:", objToSet[k], objToSet[k].constructor.name);
-      // if(typeof objToSet[k] == 'object' && objToSet[k].constructor.name == "StatefulStoreValue"){
       if(typeof objToSet[k] == 'object' && objToSet[k].__type == "StatefulStoreValue"){
-        //of type 'StatefulStoreValue'
-        // console.log("class type?", fromData[k]);
         objToSet[k].set(v);
       }else if(typeof fromData[k] == 'object'){
         //object...recur
-        this.deserialize(objToSet[k], v); // recursion ommitted in TS (i.e. TS error is intentional)
+        this.deserialize(objToSet[k], v); // recursion ommitted in TS (i.e. TS warning is intentional)
       }
     });
   }
 }
-
-
-// function serialize(fromData){
-//   const result = {};
-//   mapObject(fromData, (k,v)=> {
-//     if(typeof fromData[k] == 'object' && fromData[k].constructor.name == "StatefulStoreValue"){
-//       //of type 'StatefulStoreValue'
-//       console.log("class type?", fromData[k]);
-//       result[k] = fromData[k].get();
-//     }else if(typeof fromData[k] == 'object'){
-//       //object...recur
-//       result[k] = serialize(fromData[k]);
-//     }
-//   });
-//   return result;
-// }
-// function deserialize(objToSet, fromData){
-//   mapObject(fromData, (k,v) => {
-//     // objToSet[k].set(v);
-//     console.log("trying to set:", objToSet[k], objToSet[k].constructor.name);
-//     if(typeof objToSet[k] == 'object' && objToSet[k].constructor.name == "StatefulStoreValue"){
-//       //of type 'StatefulStoreValue'
-//       console.log("class type?", fromData[k]);
-//       // result[k] = fromData[k].get();
-//       objToSet[k].set(v);
-//     }else if(typeof fromData[k] == 'object'){
-//       //object...recur
-//       deserialize(objToSet[k], v);
-//     }
-
-//   });
-// }
 
 interface IAppSettings {
   useList: boolean
@@ -146,7 +91,6 @@ export enum ThemeName {
 }
 
 interface IStoreData extends IStatefulStoreObject {
-  // a: StatefulStoreValue<any> //for testing
   appSettings: StatefulStoreValue<IAppSettings>
   cachedCharacters: StatefulStoreValue<ILookup<IRMCharacter>>
 }
@@ -161,12 +105,7 @@ const storeData: IStoreData = {
 };
 
 export function LocalStoreProvider({children}: ILocalStoreProviderProps){
-  // const [hasLoaded, setHasLoaded] = useState(false);
   const [useValue, setUseValue] = useState<IStoreData | null>(null);
-  // const value: IStatefulStoreObject = {
-  //   a: new StatefulStoreValue(1),
-  //   b: new StatefulStoreValue(2),
-  // };
 
   const hasLoaded = useValue != null;
 
@@ -178,7 +117,6 @@ export function LocalStoreProvider({children}: ILocalStoreProviderProps){
     if(window && window.localStorage){
       saveToLocalStore = () => {
         const jsonStr = JSON.stringify(StatefulStoreObject.serialize(storeData));
-        // console.log("saving to localStore", storeData, storeData.a.get(), jsonStr);
         window.localStorage.setItem(localStoreKey, jsonStr);
       };
       StatefulStoreValue.onValueChange = () => saveToLocalStore();
@@ -186,14 +124,11 @@ export function LocalStoreProvider({children}: ILocalStoreProviderProps){
         saveToLocalStore();
       }else{//exists...get from localStore
         const jsonStr = window.localStorage.getItem(localStoreKey);
-        // console.log("got data from localStore", jsonStr);
-        if(jsonStr){//...shallow map
+        if(jsonStr){
           const objTp = JSON.parse(jsonStr);
           StatefulStoreObject.deserialize(storeData, objTp);
-          // console.log("deserialize?", storeData);
         }
       }
-      // console.log("has loaded: value?", storeData, storeData.a.get());
       setUseValue(storeData);
     }
   },[]);

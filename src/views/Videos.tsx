@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { LeftPanelLayout } from '../components/mainLayout';
-import { Modal, Box, Typography, TextField, Button, Paper } from '@mui/material';
-import { uploadVideo, uploadVideo2 } from '../services/apiService';
-import { VideoPreview } from '../components/videoPreview';
+import { Typography, TextField, Button, Paper } from '@mui/material';
+import { uploadVideo } from '../services/apiService';
 import { useLocalStore } from '../utils/localStore';
 import ProgressModal from '../components/progressModal';
-import UploadVideoModal from '../components/unused/uploadVideoModal';
 import { EventHandler } from '../utils/EventHandler';
 import ModalBasic from '../components/modalBasic';
 import styled from '@emotion/styled';
-import { PaperCustom } from '../components/customComponents';
 import { VideoPlayerCustom } from '../components/videoPlayerCustom';
 
 
@@ -68,7 +65,7 @@ export default function Videos(){
     // uploadVideo
     setIsProgressModalOpen(true);
 
-    uploadVideo2(
+    uploadVideo(
       {
         models: "Passenger",
         fps: 25,

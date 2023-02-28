@@ -1,36 +1,6 @@
 import { createTheme, ThemeProvider } from "@mui/material";
-import { blue, green, orange, purple, red, yellow } from "@mui/material/colors";
 import React, { ReactNode, useEffect, useState } from 'react';
 import { ThemeName, useLocalStore } from "../utils/localStore";
-
-
-// .palette.primary#
-// .palette.secondary#
-// .palette.error#
-// .palette.warning#
-// .palette.info#
-// .palette.success#
-
-//     primary: {
-//       // main: "red",
-//     },
-//     secondary: {
-//       // main: "red",
-//     },
-//     error: {
-//       // main: "red",
-//     },
-//     warning: {
-//       // main: "red",
-//     },
-//     info: {
-//       // main: "red",
-//     },
-//     success: {
-//       // main: "red",
-//     },
-
-//#3cff00
 
 export const defaultTheme = createTheme({
   palette:{
@@ -47,43 +17,17 @@ export const defaultTheme = createTheme({
     }
   },
   components: {
-  //   MuiPaper: {
-  //     defaultProps: {
-  //       style: {
-  //         // border: "1px solid",
-  //       }
-  //     },
-  //   },
-  //   MuiCardHeader:  {
-  //     defaultProps: {
-  //       style: {
-  //         border: "1px solid",
-  //       }
-  //     },
-  //   },
     MuiButton:  {
-        styleOverrides: {
-          root: ({ ownerState }) => ({
-            ...(ownerState.variant === 'text' &&
-              ownerState.color === 'primary' && {
-                // backgroundColor: '#202020',
-                color: '#fff',
-              }),
-          }),
-        },
-  //     defaultProps: {
-  //       style: {
-  //         color: "#3cff00",
-  //       }
-  //     },
+      styleOverrides: {
+        root: ({ ownerState }) => ({
+          ...(ownerState.variant === 'text' &&
+            ownerState.color === 'primary' && {
+              // backgroundColor: '#202020',
+              color: '#fff',
+            }),
+        }),
+      },
     },
-    // MuiSvgIcon:  {
-    //   defaultProps: {
-    //     style: {
-    //       color: "#fff",
-    //     }
-    //   },
-    // },
   },
 });
 
@@ -101,21 +45,6 @@ export const rickNMortyTheme = createTheme({
       main: "#1e7f00",
       // dark: "#3cff00",
       contrastText: "#3cff00",
-    },
-    secondary: {
-      main: yellow[500],
-    },
-    error: {
-      main: blue[500],
-    },
-    warning: {
-      main: orange[500],
-    },
-    info: {
-      main: yellow[500],
-    },
-    success: {
-      main: purple[500],
     },
     background: {
       default: "#000000",
@@ -173,7 +102,7 @@ const themes = {
 
 export default function ThemeProviderCustom({ children }: IThemeProviderCustomProps){
   const localStore = useLocalStore();
-  const [themeName, setThemeName] = useState(null);
+  const [themeName, setThemeName] = useState<ThemeName | null>(null);
 
   useEffect(() => {
     const appSettingsTp = localStore.appSettings.get();
@@ -182,7 +111,7 @@ export default function ThemeProviderCustom({ children }: IThemeProviderCustomPr
     const subscription = localStore.appSettings.addEventListener((appSettings) => {
       setThemeName(appSettings.themeName);
     });
-    if(themeName != currentThemeName) setThemeName(currentThemeName);
+    if(themeName != currentThemeName && currentThemeName) setThemeName(currentThemeName);
 
     return () => subscription.unsubscribe();
   }, [])

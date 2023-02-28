@@ -2,7 +2,7 @@ import { LeftPanelLayout } from "../components/mainLayout";
 import { gql, useQuery } from '@apollo/client';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import UserCard from "../components/userCard";
+import UserCard, { UserCardSkelton } from "../components/userCard";
 import styled from '@emotion/styled';
 import { 
   Pagination,
@@ -13,7 +13,9 @@ import {
   Card,
   Paper,
   Link,
-  useTheme
+  useTheme,
+  Input,
+  TextField
 } from '@mui/material';
 import { AccordionSummaryCustom, RadioFilterAccordian } from "../components/filterAccordion";
 import ListIcon from '@mui/icons-material/List';
@@ -115,12 +117,14 @@ export const statusOptions = [
 ];
 
 interface IFilterParams {
+  name: string
   species: string
   gender: string
   status: string
 }
 
 const defaultFilters: IFilterParams = {
+  name: '',
   species: '',
   gender: '',
   status: '',
@@ -184,7 +188,6 @@ export default function UserListing(){
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IRMCharacter | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [confirmModalText, setConfirmModalText] = useState("");
 
   const localStore = useLocalStore();
   const [useList, setUseListAux] = useState(localStore.appSettings.get().useList);
@@ -194,17 +197,12 @@ export default function UserListing(){
   const [currentPage, setCurrentPage] = useState(params && params.pageNumber && parseInt(params.pageNumber) || 1);
   const { loading, error, data, refetch } = useQuery(GET_CHARACTERS, {variables:{page:currentPage, filter: filters}}); 
 
-  
-
   const setUseList = (value: boolean) => {
     const cp = localStore.appSettings.get();
     cp.useList = value;
     localStore.appSettings.set(cp);
     setUseListAux(value);
   };
-
-  console.log("params", params);
-  console.log("data", data);
 
   const onPageChange = (event: any, pageNumber: number) => {
     navigate(`page/${pageNumber}`)
@@ -215,7 +213,6 @@ export default function UserListing(){
   const resultInfo = data && data.characters && data.characters.info;
   const pageCount = resultInfo && resultInfo.pages;
   const charactersCp = charactersTp && charactersTp.map(c => ({...c}));
-  // window.debug = characters;
 
   const characters: IRMCharacter[] = [];
 
@@ -250,8 +247,6 @@ export default function UserListing(){
     localStore.cachedCharacters.set(cp);
   }
 
-  console.log("got characters:", characters);
-
   const updateCachedCharacter = (d: IRMCharacter) => {
     const cp = localStore.cachedCharacters.get();
     const curCharacter = d && d.id && cp[d.id];///????
@@ -278,26 +273,6 @@ export default function UserListing(){
     }
     return null;
   };
-  
-  const handleClick = () => {};
-
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" onClick={handleClick}>
-      MUI
-    </Link>,
-    <Link
-      underline="hover"
-      key="2"
-      color="inherit"
-      href="/material-ui/getting-started/installation/"
-      onClick={handleClick}
-    >
-      Core
-    </Link>,
-    <Typography key="3" color="text.primary">
-      Breadcrumb
-    </Typography>,
-  ];
 
   const showConfirmModal = () => {
     setIsConfirmModalOpen(true);
@@ -311,6 +286,8 @@ export default function UserListing(){
       updateCachedCharacter(selectedUser);
     }
   };
+
+  const hasLoaded = !loading;
 
   return <>
     {/* Confirm delete modal */}
@@ -377,22 +354,15 @@ export default function UserListing(){
         </FiltersContainer>
       }
       mainPageContents={
-        characters && characters.length > 0 &&
         <div style={{ width: "100%" }}>
+          {/* info top: */}
           <Paper elevation={0} style={{  marginBottom: "12px", width: "unset", background: "none" }}>
+            <TextField variant="outlined" fullWidth label="seach by name" onChange={(e) => {e.target && setFiltersKey("name", e.target.value)}}/>
             <Typography>
-             {resultInfo.count} results
+            { hasLoaded && `${resultInfo?.count} results`}
             </Typography>
             <div style={{ display: "flex" }}>
               <ListingTypeToggle useList={useList} setUseList={setUseList}/>
-              {/* <Stack>
-                <Breadcrumbs
-                  separator={<NavigateNextIcon fontSize="small" />}
-                  aria-label="breadcrumb"
-                >
-                  {breadcrumbs}
-                </Breadcrumbs>
-              </Stack> */}
               <ExpanderSpan/>
               <Button variant="contained" onClick={() => {setSelectedUser({}); setIsEditModalOpen(true);}}>
                 <AddIcon/>
@@ -400,37 +370,44 @@ export default function UserListing(){
               </Button>
             </div>
           </Paper>
-          <UserListingContainer>
+          {/* listings: */}
+          <UserListingContainer style={{ margin: useList ? "0" : "0px -12px" }}>
             {
               useList
-              ? <CardCustom>
+              ? (<CardCustom>
                   <UsersDataGrid 
-                    usersData={characters} 
+                    usersData={hasLoaded ? characters : [{id: 0, name:"Loading..."}]} 
                     onEdit={(char)=>{setSelectedUser(char); setIsEditModalOpen(true)}}
                     onDelete={(char)=>{setSelectedUser(char); setIsConfirmModalOpen(true)}}
                   />
-                </CardCustom>
-              : characters.map(c => 
-                <UserCardContainer>
-                  <UserCard
-                    key={c.id}
-                    userData={c}
-                    onEditClick={() => {setSelectedUser(c); setIsEditModalOpen(true);}}
-                    onDeleteClick={() => {setSelectedUser(c); showConfirmModal();}}
-                  />
-                </UserCardContainer>
+                </CardCustom>)
+              : ( 
+                hasLoaded
+                ? characters.map(c => 
+                  <UserCardContainer key={c.id}>
+                    <UserCard
+                      key={c.id}
+                      userData={c}
+                      onEditClick={() => {setSelectedUser(c); setIsEditModalOpen(true);}}
+                      onDeleteClick={() => {setSelectedUser(c); showConfirmModal();}}
+                    />
+                  </UserCardContainer>)
+                
+                :["","","","","","",].map((s, i) => 
+                  <UserCardContainer key={i}>
+                    <UserCardSkelton/>
+                  </UserCardContainer>
+                )
               )
-             
             }
             <Paper style={{ width:"100%" }}>
               <Stack spacing={2}>
-                <Pagination defaultPage={currentPage} count={pageCount} onChange={onPageChange}/>
+                <Pagination page={currentPage} count={pageCount || 1} onChange={onPageChange}/>
               </Stack>
             </Paper>
           </UserListingContainer>
 
         </div>
-          
       }
     />
   </>;

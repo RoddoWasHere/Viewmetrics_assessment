@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
-import { EventHandler } from './utils/EventHandler';
+import { EventHandler } from '../utils/EventHandler';
 import { useNavigate } from 'react-router';
-import NavBar from './components/navBar';
-import MainLayout from './components/mainLayout';
+import NavBar from '../components/navBar';
+import MainLayout from '../components/mainLayout';
 
 
 

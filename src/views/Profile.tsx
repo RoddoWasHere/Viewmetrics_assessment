@@ -43,7 +43,7 @@ const GET_CHARACTER_BY_ID = gql`
 const detailsKeys = [
   {text:"species", key:"species"},
   {text:"gender", key:"gender"},
-  // {text:"type", key:"type"},
+  {text:"type", key:"type"},
   {text:"status", key:"status"},
 ];
 
@@ -60,31 +60,20 @@ function useGetUserQueryWithLocalStore(gqlQuery: DocumentNode | TypedDocumentNod
   return useQuery(gqlQuery, args);
 }
 
-
-
 export const Profile: React.FC = () => {
   let params = useParams();
   const id = params && params.id;
-  // const { loading, error, data } = useQuery(GET_CHARACTER_BY_ID, {variables:{id}}); 
   const { loading, error, data } = useGetUserQueryWithLocalStore(GET_CHARACTER_BY_ID, {variables:{id}}); 
-
-  
-  console.log("params..", params, id);
   const character = data && data.character;
-  console.log("character..", character, data);
   
   const navigate = useNavigate();
   const fn = async() => {navigate("/users")}
 
-  // return <div>Profile { id }</div>
   let isLoading = true;
 
   if(error) return <>Error....</>;
 
   return <>
-    {/* <PaperCustom >
-      <Typography variant="h4">Profile</Typography>
-    </PaperCustom> */}
     <LeftPanelLayout
       pageTitle="Profile"
       mainPageContents={

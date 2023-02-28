@@ -1,9 +1,7 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Paper } from '@mui/material';
+import { ReactNode } from 'react';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -17,7 +15,13 @@ const style = {
   p: 4,
 };
 
-export default function ModalBasic({isOpen, setIsOpen, children}) {
+interface IModalBasicProps {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  children: ReactNode
+}
+
+export default function ModalBasic({isOpen, setIsOpen, children}: IModalBasicProps) {
   return (
     <div>
       <Modal

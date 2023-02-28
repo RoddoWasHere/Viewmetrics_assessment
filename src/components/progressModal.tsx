@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useState, useEffect }  from 'react';
 import { Modal, Typography } from '@mui/material';
-import ProgressCircular, { CircularProgressWithLabel } from './progressCircular';
+import { CircularProgressWithLabel } from './progressCircular';
 import { EventHandler } from '../utils/EventHandler';
 
 
@@ -37,14 +37,12 @@ export default function ProgressModal({isOpen, setIsOpen, progressEventHandler}:
       open={isOpen} 
       onClose={() => setIsOpen(false)}
     >
-    {/* <div></div> */}
       <div style={divStyle}>
         <Typography style={{ color: "white"}}>
           Upload in Progress. Please wait....
         </Typography>
         <p/>
         <CircularProgressWithLabel value={value}/>
-        {/* <ProgressCircular/> */}
       </div>
     </Modal>;
 }

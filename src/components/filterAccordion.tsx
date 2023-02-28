@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { 
-    Pagination,
-    Stack,
     Typography,
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Button,
     Radio,
     RadioGroup,
     FormControlLabel,
@@ -45,8 +42,14 @@ const ExpanderDiv = styled.div`
   height: 100%
 `;
 
+interface IFilterAccordianProps {
+  title: string
+  children: ReactNode
+  onClear: () => void
+  showClear: boolean
+}
 
-export default function FilterAccordian({title, children, onClear, showClear}){
+export default function FilterAccordian({title, children, onClear, showClear}: IFilterAccordianProps){
   const [isExpanded, setIsExpanded] = useState(true);
 
   return<AccordionCustom defaultExpanded={true} expanded={isExpanded} disableGutters={true}>
@@ -66,7 +69,13 @@ export default function FilterAccordian({title, children, onClear, showClear}){
   </AccordionCustom>;
 }
 
-export function RadioFilterAccordian({title, options, onSetValue}){
+interface IRadioFilterAccordianProps {
+  title: string
+  options: string[]
+  onSetValue: (value: string) => void
+}
+
+export function RadioFilterAccordian({title, options, onSetValue}: IRadioFilterAccordianProps){
   const [value, setValueAux] = useState('');
   const theme = useTheme();
 
