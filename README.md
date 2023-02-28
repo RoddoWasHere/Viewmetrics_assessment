@@ -58,7 +58,7 @@ yarn run dev
 
 Once running, navigate to https://localhost:8000
 
-_note: https not http_
+_*note: https not http_
 
 
 ### Build

@@ -359,7 +359,7 @@ export default function UserListing(){
           <Paper elevation={0} style={{  marginBottom: "12px", width: "unset", background: "none" }}>
             <TextField variant="outlined" fullWidth label="seach by name" onChange={(e) => {e.target && setFiltersKey("name", e.target.value)}}/>
             <Typography>
-            { hasLoaded && `${resultInfo?.count} results`}
+            { hasLoaded && `${resultInfo?.count || 0 } results`}
             </Typography>
             <div style={{ display: "flex" }}>
               <ListingTypeToggle useList={useList} setUseList={setUseList}/>
@@ -406,7 +406,6 @@ export default function UserListing(){
               </Stack>
             </Paper>
           </UserListingContainer>
-
         </div>
       }
     />
